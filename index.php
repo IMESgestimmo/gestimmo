@@ -1,6 +1,31 @@
 <?php
 	if($_POST){
-		
+		require('config.php');
+
+		$sql = "SELECT * FROM utilisateur 
+				WHERE username = '$_POST[username]'
+				AND password = MD5('$_POST[pass]')";
+
+		$reponse = mysqli_query($con, $sql) or die("Erreur execution requete : ".mysqli_error($con)." Requete : ".$sql);
+
+		if ($user = mysqli_fetch_assoc($reponse)) {
+			session_start();
+
+			$_SESSION['user'] = $user;
+
+			switch ($user['profil']) {
+				case 'admin':
+					header('Location:admin.php');
+					break;
+				case 'gerant':
+					header('Location:gerant.php');
+					break;
+				
+				default:
+					# code...
+					break;
+			}
+		}
 	}
 
 
@@ -46,12 +71,12 @@
 				<form class="login100-form validate-form p-b-33 p-t-5" action="index.php" method="post">
 
 					<div class="wrap-input100 validate-input" data-validate = "Enter username">
-						<input class="input100" type="text" name="username" placeholder="User name">
+						<input class="input100" type="text" name="username" placeholder="Pseudo">
 						<span class="focus-input100" data-placeholder="&#xe82a;"></span>
 					</div>
 
 					<div class="wrap-input100 validate-input" data-validate="Enter password">
-						<input class="input100" type="password" name="pass" placeholder="Password">
+						<input class="input100" type="password" name="pass" placeholder="Mot de passe">
 						<span class="focus-input100" data-placeholder="&#xe80f;"></span>
 					</div>
 
